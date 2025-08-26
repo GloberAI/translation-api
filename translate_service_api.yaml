@@ -1,0 +1,427 @@
+openapi: 3.0.0
+info:
+  title: Glober Translation Service API
+  description: A context-aware translation service that supports Translation Memory, Glossaries, and multimedia asset translation for delivering high-quality, consistent results.
+  version: 1.0.0
+servers:
+  - url: https://api.glober.ai/dev/api
+paths:
+  /translate:
+    post:
+      summary: Creates a new translation project.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A human-readable name for the translation project (not translated).
+                tenant_id:
+                  type: string
+                  description: Optional tenant ID, such as a store.
+                source_language:
+                  type: string
+                  description: BCP-47 language code.
+                  example: "en-US"
+                target_language:
+                  type: string
+                  description: BCP-47 language code.
+                  example: "es-CO"
+                translation_context_tags:
+                  $ref: '#/components/schemas/TranslationContextTags'
+                assets:
+                  type: object
+                  properties:
+                    texts:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - "Nike Air Max Plus"
+                        - "Blank Subtitle"
+                    structured_texts:
+                      type: string
+                      description: Single level Key Value Json Object with String values
+                      example:
+                        - "{'key':'value'}"
+                    text_context_tags:
+                      $ref: '#/components/schemas/TextContextTags'
+                    images:
+                      type: array
+                      items:
+                        type: string
+                        format: uuid
+                      description: Array of image_asset_ids to be translated.
+                    documents:
+                      type: array
+                      items:
+                        type: string
+                        format: uuid
+                      description: Array of document_asset_ids to be translated.
+                    videos:
+                      type: array
+                      items:
+                        type: string
+                        format: uuid
+                      description: Array of video_asset_ids to be translated.
+                    audios:
+                      type: array
+                      items:
+                        type: string
+                        format: uuid
+                      description: Array of audio_asset_ids to be translated.
+      responses:
+        '200':
+          description: Translation project created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: '#/components/schemas/TranslationProject'
+  /projects/{project_id}:
+    get:
+      summary: Get translation by project ID.
+      parameters:
+        - in: path
+          name: project_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The ID of the translation project to retrieve.
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: '#/components/schemas/TranslationProject'
+        '404':
+          description: Translation project not found.
+  /asset-upload/image:
+    post:
+      summary: Uploads an image asset.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tenant_id:
+                  type: string
+                  description: Optional tenant ID, such as a store.
+                file:
+                  type: string
+                  format: binary
+                  description: The image file to upload.
+      responses:
+        '200':
+          description: Asset uploaded successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image_asset_id:
+                    type: string
+                    format: uuid
+  /asset-upload/document:
+    post:
+      summary: Uploads a document asset.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tenant_id:
+                  type: string
+                  description: Optional tenant ID, such as a store.
+                file:
+                  type: string
+                  format: binary
+                  description: The document file to upload.
+      responses:
+        '200':
+          description: Asset uploaded successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  document_asset_id:
+                    type: string
+                    format: uuid
+  /asset-upload/video:
+    post:
+      summary: Uploads a video asset.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tenant_id:
+                  type: string
+                  description: Optional tenant ID, such as a store.
+                file:
+                  type: string
+                  format: binary
+                  description: The video file to upload.
+      responses:
+        '200':
+          description: Asset uploaded successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  video_asset_id:
+                    type: string
+                    format: uuid
+  /asset-upload/audio:
+    post:
+      summary: Uploads an audio asset.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tenant_id:
+                  type: string
+                  description: Optional tenant ID , such as a store.
+                file:
+                  type: string
+                  format: binary
+                  description: The audio file to upload.
+      responses:
+        '200':
+          description: Asset uploaded successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audio_asset_id:
+                    type: string
+                    format: uuid
+  /asset-download/image/{image_asset_id}:
+    get:
+      summary: Downloads a translated image asset.
+      parameters:
+        - in: path
+          name: image_asset_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The ID of the image asset to download.
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /asset-download/document/{document_asset_id}:
+    get:
+      summary: Downloads a translated document asset.
+      parameters:
+        - in: path
+          name: document_asset_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The ID of the document asset to download.
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /asset-download/video/{video_asset_id}:
+    get:
+      summary: Downloads a translated video asset.
+      parameters:
+        - in: path
+          name: video_asset_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The ID of the video asset to download.
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /asset-download/audio/{audio_asset_id}:
+    get:
+      summary: Downloads a translated audio asset.
+      parameters:
+        - in: path
+          name: audio_asset_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The ID of the audio asset to download.
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /glossary/upload:
+    post:
+      summary: Uploads glossary pairs.  These user uploaded glossary pairs will have a higher usage priority than Glober-managed glossary pairs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_language
+                - target_language
+                - source_texts
+                - translated_texts
+              properties:
+                tenant_id:
+                  type: string
+                  description: Optional tenant ID, such as a store.
+                source_language:
+                  type: string
+                  description: BCP-47 language code for the source language.
+                  example: "en-US"
+                target_language:
+                  type: string
+                  description: BCP-47 language code for the target language.
+                  example: "es-CO"
+                source_texts:
+                  type: array
+                  items:
+                    type: string
+                  description: An array of source texts for the glossary.
+                translated_texts:
+                  type: array
+                  items:
+                    type: string
+                  description: An array of translated texts, corresponding to the source_texts. Array must be the same length as source_texts array.
+      responses:
+        '200':
+          description: Glossary pairs uploaded successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    type: integer
+                    description: The number of new glossary pairs created.
+                  updated:
+                    type: integer
+                    description: The number of existing glossary pairs updated.
+components:
+  schemas:
+    TranslationProject:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - COMPLETED
+            - FAILED
+        translated_assets:
+          type: object
+          properties:
+            texts:
+              type: array
+              items:
+                type: string
+              description: The translated texts, in the same order as the input "texts" field.
+            structured_texts:
+              type: string
+              description: JSON with only the value translated.
+              example:
+                - "{'key':'translated_value'}"
+            images:
+              type: array
+              items:
+                type: string
+                format: uuid
+              description: Translated image asset_ids.
+            documents:
+              type: array
+              items:
+                type: string
+                format: uuid
+              description: Translated document asset_ids.
+            videos:
+              type: array
+              items:
+                type: string
+                format: uuid
+              description: Translated video asset_ids.
+            audios:
+              type: array
+              items:
+                type: string
+                format: uuid
+              description: Translated audio asset_ids.
+    TranslationContextTags:
+      type: array
+      items:
+        type: string
+      description: |-
+        A list of "key:value" pairs that provide context for the translation.
+        Allowed keys are "translation_type", "industry", and "product_category".
+      example:
+        - "translation_type:ecommerce_product"
+        - "industry:ecommerce_fashion"
+        - "product_category:Athletic Footwear Running Shoes"
+    TextContextTags:
+      type: array
+      items:
+        type: string
+      description: |-
+        A list of "key:value" pairs describing the context of each text asset, in the same order as the "texts" field.
+        The only allowed key is "text_type".
+      example:
+        - "text_type:title"
+        - "text_type:subtitle"
+  securitySchemas:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+security:
+  - ApiKeyAuth: [] 
