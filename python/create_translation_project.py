@@ -1,4 +1,3 @@
-
 import argparse
 import json
 import os
@@ -58,4 +57,4 @@ if __name__ == "__main__":
         tags = args.translation_context_tags.split(',')
 
     response = create_translation_project(args.name, args.source_language, args.target_language, args.texts, tags, args.tenant_id)
-    print(response.json())
+    print(json.dumps(response.json(), indent=2))

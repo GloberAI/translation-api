@@ -68,6 +68,6 @@ if (require.main === module) {
     [name, sourceLanguage, targetLanguage, ...texts] = args;
     
     createTranslationProject(name, sourceLanguage, targetLanguage, texts, translationContextTags, tenantId)
-        .then(response => console.log(response))
+        .then(response => console.log(JSON.stringify(response, null, '  ')))
         .catch(error => console.error(error));
 }

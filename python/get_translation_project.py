@@ -1,5 +1,5 @@
-
 import argparse
+import json
 import os
 import requests
 
@@ -32,4 +32,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     response = get_translation_project(args.project_id)
-    print(response.json())
+    print(json.dumps(response.json(), indent=2))

@@ -12,7 +12,7 @@ These scripts allow you to interact with the Translation Service API.
 2.  Set the environment variables:
     ```
     export GLOBER_API_KEY=your_api_key
-    export GLOBER_BASE_URL=https://api.glober.com
+    export GLOBER_BASE_URL=https://api.glober.com/v1/api
     ```
 
 ## Usage

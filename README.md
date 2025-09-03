@@ -132,9 +132,9 @@ x-api-key: YOUR_API_KEY
 
 **Curl Example:**
 ```bash
-curl -X POST https://api.glober.ai/v1/api/translate 
--H "x-api-key: YOUR_API_KEY" 
--H "Content-Type: application/json" 
+curl -X POST https://api.glober.ai/v1/api/translate \
+-H "x-api-key: YOUR_API_KEY" \
+-H "Content-Type: application/json" \
 -d '{
   "name": "My Project with Context",
   "tenant_id": "store-123",

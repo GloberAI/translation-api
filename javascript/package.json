@@ -4,9 +4,10 @@
   "description": "Scripts for interacting with the Translation Service API",
   "main": "create_translation_project.js",
   "scripts": {
-    "start": "node create_translation_project.js"
+    "start": "node create_translation_project.js",
+    "get": "node get_translation_project.js"
   },
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^1.11.0"
   }
 }

@@ -35,6 +35,6 @@ if (require.main === module) {
 
     const [projectId] = args;
     getTranslationProject(projectId)
-        .then(response => console.log(response))
+        .then(response => console.log(JSON.stringify(response, null, '  ')))
         .catch(error => console.error(error));
 }
